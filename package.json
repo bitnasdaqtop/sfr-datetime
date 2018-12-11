@@ -1,0 +1,20 @@
+{
+  "name": "sfr-datetime",
+  "version": "0.0.1",
+  "description": "Extending the date prototype",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkinfeng/sfr-datetime.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jkinfeng/sfr-datetime/issues"
+  },
+  "homepage": "https://github.com/jkinfeng/sfr-datetime#readme"
+}
