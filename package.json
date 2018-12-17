@@ -1,6 +1,6 @@
 {
   "name": "sfr-datetime",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "Extending the date prototype",
   "main": "index.js",
   "scripts": {
