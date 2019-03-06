@@ -1,6 +1,6 @@
 'use strict';
 
-const YTD = {
+const DATE_METHODS = {
     YYYY: ['getFullYear', 4],
     YY: ['getFullYear', 2],
     MM: ['getMonth', 2, 1],
@@ -11,49 +11,44 @@ const YTD = {
     ms: ['getMilliseconds', 3]
 };
 
-/**
- * unix timestamp: Accurate to milliseconds
- * Date.prototype.getTime
- * */
+const DATE_REGEX = /(?=(YYYY|YY|MM|DD|HH|mm|ss|ms))\1([:\/]*)/;
 
-/**
- * unix timestamp: seconds
- * */
-Date.prototype.getTimeSeconds = function () {
+function dateFormat($date, $pattern) {
+    function findMatch() {
+        const matching = DATE_REGEX.exec($pattern);
+        if (matching) {
+            const matchTarget = DATE_METHODS[matching[1]];
+            const stringAddPrefix = '00' + String($date[matchTarget[0]]() + (matchTarget[2] || 0));
+            const stringExtract = stringAddPrefix.slice(-matchTarget[1]) + (matching[2] || '');
+            $pattern = $pattern.replace(matching[0], stringExtract);
+            findMatch();
+        }
+    }
+
+    findMatch();
+    return $pattern
+}
+
+Date.prototype.getUnixSeconds = function () {
     return Math.round(this.getTime() / 1000)
 };
 
-/**
- * unix timestamp: milliseconds
- * */
-Date.prototype.getTimeMilliseconds = function () {
-    return Math.round(this.getTime() / 1000) * 1000
+Date.prototype.getUnixMilliseconds = function () {
+    return this.getUnixSeconds() * 1000
 };
 
-/**
- * Date Calculator: Add to or Subtract From a Date
- * */
-Date.prototype.calcDays = function ($days) {
+Date.prototype.getDateZeroTime = function () {
+    return new Date(this.getFullYear(), this.getMonth(), this.getDate(), 0, 0, 0)
+};
+
+Date.prototype.dateAdd = function ($days) {
     return this.setDate(this.getDate() + $days);
 };
 
-/**
- * DateFormatter
- * */
+Date.prototype.dateDiff = function ($date) {
+    return (this.getDateZeroTime() - $date) / 86400000
+};
+
 Date.prototype.format = function ($pattern = 'YYYY-MM-DD HH:mm:ss:ms') {
-    const __date = this;
-
-    (function a() {
-        const b = /(?=(YYYY|YY|MM|DD|HH|mm|ss|ms))\1([:\/]*)/;
-        const c = b.exec($pattern);
-        if (c) {
-            const d = YTD[c[1]];
-            const e = '00' + String(__date[d[0]]() + (d[2] || 0));
-            const f = e.slice(-d[1]) + (c[2] || '');
-            $pattern = $pattern.replace(c[0], f);
-            a();
-        }
-    })();
-
-    return $pattern
+    return dateFormat(this, $pattern)
 };
